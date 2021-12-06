@@ -1,25 +1,24 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\cidos\\Source\\Repos\\WalkingSkeleton\\WalkingSkeletonApi\\WalkingSkeletonApi.csproj": {}
+    "C:\\Users\\hp\\Source\\Repos\\walking-skeleton\\WalkingSkeletonApi\\WalkingSkeletonApi.csproj": {}
   },
   "projects": {
-    "C:\\Users\\cidos\\Source\\Repos\\WalkingSkeleton\\WalkingSkeletonApi\\WalkingSkeletonApi.csproj": {
+    "C:\\Users\\hp\\Source\\Repos\\walking-skeleton\\WalkingSkeletonApi\\WalkingSkeletonApi.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\cidos\\Source\\Repos\\WalkingSkeleton\\WalkingSkeletonApi\\WalkingSkeletonApi.csproj",
+        "projectUniqueName": "C:\\Users\\hp\\Source\\Repos\\walking-skeleton\\WalkingSkeletonApi\\WalkingSkeletonApi.csproj",
         "projectName": "WalkingSkeletonApi",
-        "projectPath": "C:\\Users\\cidos\\Source\\Repos\\WalkingSkeleton\\WalkingSkeletonApi\\WalkingSkeletonApi.csproj",
-        "packagesPath": "C:\\Users\\cidos\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\cidos\\Source\\Repos\\WalkingSkeleton\\WalkingSkeletonApi\\obj\\",
+        "projectPath": "C:\\Users\\hp\\Source\\Repos\\walking-skeleton\\WalkingSkeletonApi\\WalkingSkeletonApi.csproj",
+        "packagesPath": "C:\\Users\\hp\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\hp\\Source\\Repos\\walking-skeleton\\WalkingSkeletonApi\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
-          "C:\\Program Files (x86)\\Microsoft\\Xamarin\\NuGet\\",
-          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+          "C:\\Program Files (x86)\\Microsoft\\Xamarin\\NuGet\\"
         ],
         "configFilePaths": [
-          "C:\\Users\\cidos\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\hp\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
@@ -29,6 +28,7 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -47,6 +47,10 @@
         "netcoreapp3.1": {
           "targetAlias": "netcoreapp3.1",
           "dependencies": {
+            "Microsoft.AspNetCore.Authentication.JwtBearer": {
+              "target": "Package",
+              "version": "[3.1.1, )"
+            },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
               "version": "[6.2.3, )"
@@ -78,7 +82,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.101\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.100\\RuntimeIdentifierGraph.json"
         }
       }
     }

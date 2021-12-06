@@ -1,8 +1,12 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using WalkingSkeletonApi.Data;
 using WalkingSkeletonApi.Data.Repositories.Database;
 using WalkingSkeletonApi.Services;
 
@@ -23,11 +27,25 @@ namespace WalkingSkeletonApi
             services.AddControllers();
 
             services.AddScoped<IADOOperations, ADOOperation>();
+            services.AddScoped<IJWTService, JWTService>();
+            
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IUserService, UserService>();
 
             services.AddCors();
             services.AddSwaggerGen();
+
+            services.AddAuthentication(option =>
+            {
+                option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(option => {
+                var param = new TokenValidationParameters();
+                param.IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:SecretKey"]));
+                param.ValidateIssuer = false;
+                param.ValidateAudience = false;
+                option.TokenValidationParameters = param;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -39,6 +57,8 @@ namespace WalkingSkeletonApi
             }
 
             app.UseRouting();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 

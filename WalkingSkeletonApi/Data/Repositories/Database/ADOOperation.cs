@@ -5,6 +5,7 @@ using System.Data.SqlClient;
 using System.Data.Common;
 using System.Linq;
 using System.Threading.Tasks;
+using WalkingSkeletonApi.Models;
 
 namespace WalkingSkeletonApi.Data.Repositories.Database
 {
@@ -56,6 +57,50 @@ namespace WalkingSkeletonApi.Data.Repositories.Database
             }
 
             return true;
+        }
+
+        public async Task<List<ExecuterReaderResult>> ExecuteForReader(string stmt, params string[] fields)
+        {
+            if (_conn == null)
+                throw new Exception("Connection not established!");
+
+            var listOfRows = new List<ExecuterReaderResult>();
+            var row = new ExecuterReaderResult();
+
+            try
+            {
+                using (var cmd = new SqlCommand(stmt, _conn))
+                {
+                    _conn.Open();
+                    var res = await cmd.ExecuteReaderAsync();
+
+                    while (res.HasRows)
+                    {
+                        while (res.Read())
+                        {
+                            foreach (var field in fields)
+                            {
+                                row.Fields.Add(field);
+                                row.Values.Add(res[field].ToString());
+                            }
+                            listOfRows.Add(row);                          
+                            
+                        }
+
+                        await res.NextResultAsync();
+                    }
+                }
+            }
+            catch (DbException ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            finally
+            {
+                _conn.Close();
+            }
+
+            return listOfRows;
         }
 
         public async Task<bool> ExecuteForTransactionQuery(string stmt, string stmt2)

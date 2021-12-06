@@ -22,53 +22,94 @@ namespace WalkingSkeletonApi.Data.Repositories.Database
             _config = config;
         }
 
-        public Task<bool> Add<T>(T entity)
+        public async Task<bool> Add<T>(T entity)
         {
-            throw new NotImplementedException();
+            var user = entity as User;
+            var stmt = $"INSERT INTO AppUser (id, lastName, firstName, email, passwordHash, passwordSalt)" +
+                        $"VALUES('{user.Id}', '{user.LastName}', '{user.FirstName}', '{user.Email}', '{user.PasswordHash}', '{user.PasswordSalt}')";
+            try
+            {
+                if (await _ado.ExecuteForQuery(stmt))
+                {
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
+            return false;
+        }
+
+        public async Task<User> GetUserByEmail(string email)
+        {
+
+            var user = new User();
+
+            string stmt = $"SELECT * FROM {_config.GetSection("Tables:UserTable").Value} WHERE email = '{email}'";
+
+            try
+            {
+                var response = await _ado.ExecuteForReader(stmt, "id", "firstname", "lastname", "email");
+
+                if (response == null)
+                {
+                    throw new Exception("No record found");
+                }
+
+                user = new User
+                {
+                    Id = response[0].Values[0],
+                    LastName = response[0].Values[1],
+                    FirstName = response[0].Values[2],
+                    Email = response[0].Values[3]
+                };
+
+            }
+            catch (DbException ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
+            return user;
         }
 
         public async Task<List<User>> GetUsers()
         {
-            if(_conn == null)
-                throw new Exception("Connection not established!");
 
             var listOfUsers = new List<User>();
 
+            string stmt = $"SELECT * FROM {_config.GetSection("Tables:UserTable").Value}";
+
             try
             {
-                using(var cmd = new SqlCommand($"SELECT * FROM {_config.GetSection("Tables:UserTable").Value}", _conn))
-                {
-                    _conn.Open();
-                    var res = await cmd.ExecuteReaderAsync();
+                var response = await _ado.ExecuteForReader(stmt, "id", "firstname", "lastname", "email");
 
-                    while (res.HasRows)
-                    {
-                        while (res.Read())
-                        {
-                            listOfUsers.Add(new User
-                            {
-                                Id = res["id"].ToString(),
-                                LastName = res["lastName"].ToString(),
-                                FirstName = res["firstName"].ToString(),
-                                Email = res["email"].ToString()
-                            });
-                        }
-                       
-                        await res.NextResultAsync();
-                    }
+                if(response == null)
+                {
+                    throw new Exception("No record found");
                 }
 
-                return listOfUsers;
+                foreach (var item in response)
+                {
+                    //var values = item.Values.ToArray();
 
+                    listOfUsers.Add(new User
+                    {
+                        Id = item.Values[0],
+                        LastName = item.Values[1],
+                        FirstName = item.Values[2],
+                        Email = item.Values[3]
+                    });
+                }                                       
+            
             }catch(DbException ex)
             {
                 throw new Exception(ex.Message);
             }
-            finally
-            {
-                _conn.Close();
-            }
 
+            return listOfUsers;
         }
     }
 }

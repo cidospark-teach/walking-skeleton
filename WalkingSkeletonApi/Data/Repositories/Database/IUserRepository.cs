@@ -9,5 +9,6 @@ namespace WalkingSkeletonApi.Data.Repositories.Database
     public interface IUserRepository : ICRUDRepo
     {
         Task<List<User>> GetUsers();
+        Task<User> GetUserByEmail(string email);
     }
 }
