@@ -43,10 +43,13 @@ namespace WalkingSkeletonApi.Services
 
         public async Task<ResponseDto<LoginCredDto>> Login(string email, string password)
         {
+            // the code below has no much importance now that LoginDto have been added data annotations
+            #region removable code
             if (String.IsNullOrWhiteSpace(email)) 
                 throw new Exception("Email is empty");
             if (String.IsNullOrWhiteSpace(password))
                 throw new Exception("Password is empty");
+            #endregion
 
             var loginCred = new LoginCredDto();
             var res = new ResponseDto<LoginCredDto>();
