@@ -51,7 +51,7 @@ namespace WalkingSkeletonApi.Data.Repositories.Database
 
             try
             {
-                var response = await _ado.ExecuteForReader(stmt, "id", "firstname", "lastname", "email");
+                var response = await _ado.ExecuteForReader(stmt, "id", "firstname", "lastname", "email", "passwordHash", "passwordSalt");
 
                 if (response == null)
                 {
@@ -63,7 +63,9 @@ namespace WalkingSkeletonApi.Data.Repositories.Database
                     Id = response[0].Values[0],
                     LastName = response[0].Values[1],
                     FirstName = response[0].Values[2],
-                    Email = response[0].Values[3]
+                    Email = response[0].Values[3],
+                    PasswordHash = response[0].ByteValues[0],
+                    PasswordSalt = response[0].ByteValues[1],
                 };
 
             }

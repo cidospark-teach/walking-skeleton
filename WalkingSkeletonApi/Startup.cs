@@ -69,7 +69,7 @@ namespace WalkingSkeletonApi
                 endpoints.MapControllers();
             });
 
-            //SetupSeed.SeedMe(aDOOperations).Wait();
+            SetupSeed.SeedMe(aDOOperations).Wait();
 
             app.UseSwagger();
             app.UseSwaggerUI(x => x.SwaggerEndpoint("/swagger/v1/swagger.json", "WalkingSkeleton-v1"));

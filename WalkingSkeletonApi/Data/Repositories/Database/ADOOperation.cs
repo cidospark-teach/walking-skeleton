@@ -65,7 +65,6 @@ namespace WalkingSkeletonApi.Data.Repositories.Database
                 throw new Exception("Connection not established!");
 
             var listOfRows = new List<ExecuterReaderResult>();
-            var row = new ExecuterReaderResult();
 
             try
             {
@@ -78,9 +77,12 @@ namespace WalkingSkeletonApi.Data.Repositories.Database
                     {
                         while (res.Read())
                         {
+                            var row = new ExecuterReaderResult();
                             foreach (var field in fields)
                             {
                                 row.Fields.Add(field);
+                                if (field.Equals("passwordHash") || field.Equals("passwordSalt"))
+                                    row.ByteValues.Add((byte[])res[field]);
                                 row.Values.Add(res[field].ToString());
                             }
                             listOfRows.Add(row);                          

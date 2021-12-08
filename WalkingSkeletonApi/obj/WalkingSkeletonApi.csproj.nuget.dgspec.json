@@ -1,24 +1,25 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\hp\\Source\\Repos\\walking-skeleton\\WalkingSkeletonApi\\WalkingSkeletonApi.csproj": {}
+    "C:\\Users\\cidos\\Source\\Mentorship and Training\\SQ009\\Week 7\\walking-skeleton\\WalkingSkeletonApi\\WalkingSkeletonApi.csproj": {}
   },
   "projects": {
-    "C:\\Users\\hp\\Source\\Repos\\walking-skeleton\\WalkingSkeletonApi\\WalkingSkeletonApi.csproj": {
+    "C:\\Users\\cidos\\Source\\Mentorship and Training\\SQ009\\Week 7\\walking-skeleton\\WalkingSkeletonApi\\WalkingSkeletonApi.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\hp\\Source\\Repos\\walking-skeleton\\WalkingSkeletonApi\\WalkingSkeletonApi.csproj",
+        "projectUniqueName": "C:\\Users\\cidos\\Source\\Mentorship and Training\\SQ009\\Week 7\\walking-skeleton\\WalkingSkeletonApi\\WalkingSkeletonApi.csproj",
         "projectName": "WalkingSkeletonApi",
-        "projectPath": "C:\\Users\\hp\\Source\\Repos\\walking-skeleton\\WalkingSkeletonApi\\WalkingSkeletonApi.csproj",
-        "packagesPath": "C:\\Users\\hp\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\hp\\Source\\Repos\\walking-skeleton\\WalkingSkeletonApi\\obj\\",
+        "projectPath": "C:\\Users\\cidos\\Source\\Mentorship and Training\\SQ009\\Week 7\\walking-skeleton\\WalkingSkeletonApi\\WalkingSkeletonApi.csproj",
+        "packagesPath": "C:\\Users\\cidos\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\cidos\\Source\\Mentorship and Training\\SQ009\\Week 7\\walking-skeleton\\WalkingSkeletonApi\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
-          "C:\\Program Files (x86)\\Microsoft\\Xamarin\\NuGet\\"
+          "C:\\Program Files (x86)\\Microsoft\\Xamarin\\NuGet\\",
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
         ],
         "configFilePaths": [
-          "C:\\Users\\hp\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\cidos\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
@@ -28,7 +29,6 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -82,7 +82,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.100\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.101\\RuntimeIdentifierGraph.json"
         }
       }
     }

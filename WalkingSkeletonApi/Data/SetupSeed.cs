@@ -1,7 +1,9 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WalkingSkeletonApi.Commons;
 using WalkingSkeletonApi.Data.Repositories.Database;
 
 namespace WalkingSkeletonApi.Data
@@ -21,8 +23,8 @@ namespace WalkingSkeletonApi.Data
                             lastName nvarchar(10) NOT NULL,
                             firstName nvarchar(10) NOT NULL,
                             email nvarchar(255) NOT NULL,
-                            passwordHash nvarchar(255) NOT NULL,
-                            passwordSalt nvarchar(255) NOT NULL
+                            passwordHash varbinary(max) NOT NULL,
+                            passwordSalt varbinary(max) NOT NULL
                         );
 
                         Create Table Roles(
@@ -30,13 +32,17 @@ namespace WalkingSkeletonApi.Data
                             RoleName nvarchar(10) NOT NULL
                         );";
 
-            string stmt2 = @"
-                        INSERT INTO AppUser (id, lastName, firstName, email, passwordHash, passwordSalt)
-                        VALUES('1', 'John', 'Doe', 'john@doe.com', '12345', '12345');
+            var hashes = Util.HashGenerator("12345");
+            var hexString1 = "0x" + String.Join("", hashes[0].Select(n => n.ToString("X2")));
+            var hexString2 = "0x" + String.Join("", hashes[1].Select(n => n.ToString("X2")));
 
-                        
-                        INSERT INTO Roles (id, RoleName)
-                        VALUES('1', 'Admin'), ('2', 'Regular');";
+            string stmt2 = String.Format("INSERT INTO AppUser (id, lastName, firstName, email, passwordHash, passwordSalt)" +
+                        $"VALUES('1', 'John', 'Doe', 'john@doe.com', {hexString1}, {hexString2});");
+
+
+            stmt2 += "INSERT INTO Roles (id, RoleName) VALUES('1', 'Admin'), ('2', 'Regular');";
+
+
 
             try
             {
