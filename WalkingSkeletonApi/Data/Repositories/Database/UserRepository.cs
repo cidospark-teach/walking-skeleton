@@ -12,21 +12,21 @@ namespace WalkingSkeletonApi.Data.Repositories.Database
     public class UserRepository : IUserRepository
     {
         private readonly IADOOperations _ado;
-        private readonly SqlConnection _conn;
         private readonly IConfiguration _config;
 
         public UserRepository(IADOOperations aDOOperations, IConfiguration config)
         {
             _ado = aDOOperations;
-            _conn = new SqlConnection(config.GetSection("ConnectionStrings:Default").Value);
             _config = config;
         }
 
         public async Task<bool> Add<T>(T entity)
         {
             var user = entity as User;
+            var passHash = "0x" + String.Join("", user.PasswordHash.Select(n => n.ToString("X2")));
+            var passSalt = "0x" + String.Join("", user.PasswordSalt.Select(n => n.ToString("X2")));
             var stmt = $"INSERT INTO AppUser (id, lastName, firstName, email, passwordHash, passwordSalt)" +
-                        $"VALUES('{user.Id}', '{user.LastName}', '{user.FirstName}', '{user.Email}', '{user.PasswordHash}', '{user.PasswordSalt}')";
+                        $"VALUES('{user.Id}', '{user.LastName}', '{user.FirstName}', '{user.Email}', {passHash}, {passSalt})";
             try
             {
                 if (await _ado.ExecuteForQuery(stmt))
