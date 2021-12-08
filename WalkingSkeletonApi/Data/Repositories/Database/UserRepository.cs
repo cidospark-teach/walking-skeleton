@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using WalkingSkeletonApi.Models;
@@ -23,8 +22,10 @@ namespace WalkingSkeletonApi.Data.Repositories.Database
         public async Task<bool> Add<T>(T entity)
         {
             var user = entity as User;
+            var passHash = "0x" + String.Join("", user.PasswordHash.Select(n => n.ToString("X2")));
+            var passSalt = "0x" + String.Join("", user.PasswordSalt.Select(n => n.ToString("X2")));
             var stmt = $"INSERT INTO AppUser (id, lastName, firstName, email, passwordHash, passwordSalt)" +
-                        $"VALUES('{user.Id}', '{user.LastName}', '{user.FirstName}', '{user.Email}', '{user.PasswordHash}', '{user.PasswordSalt}')";
+                        $"VALUES('{user.Id}', '{user.LastName}', '{user.FirstName}', '{user.Email}', {passHash}, {passSalt})";
             try
             {
                 if (await _ado.ExecuteForQuery(stmt))
@@ -51,9 +52,9 @@ namespace WalkingSkeletonApi.Data.Repositories.Database
             {
                 var response = await _ado.ExecuteForReader(stmt, "id", "firstname", "lastname", "email", "passwordHash", "passwordSalt");
 
-                if (response == null)
+                if (response.Count <= 0)
                 {
-                    throw new Exception("No record found");
+                    return null;
                 }
 
                 user = new User
@@ -86,7 +87,7 @@ namespace WalkingSkeletonApi.Data.Repositories.Database
             {
                 var response = await _ado.ExecuteForReader(stmt, "id", "firstname", "lastname", "email");
 
-                if(response == null)
+                if(response.Count <= 0)
                 {
                     throw new Exception("No record found");
                 }

@@ -85,21 +85,13 @@ namespace WalkingSkeletonApi.Controllers
                 Email = model.Email
             };            
 
-            try
+            var response = await _userService.Register(user, model.Password);
+            if (!response.Status)
             {
-                var response = await _userService.Register(user, model.Password);
-                if (response.Status)
-                {
-                    return Ok(response);
-                }
+                return BadRequest(response);
             }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-
-            return BadRequest("User not added");
-            
+            return Ok(response);
+           
         }
     }
 }

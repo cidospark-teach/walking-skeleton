@@ -9,8 +9,8 @@ using WalkingSkeletonApi.Services;
 
 namespace WalkingSkeletonApi.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
+    //[ApiController]
+    [Route("[controller]")]
     public class AuthController : ControllerBase
     {
         private readonly IUserService _userService;
@@ -18,22 +18,15 @@ namespace WalkingSkeletonApi.Controllers
         {
             _userService = user;
         }
+
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginDTO model)
         {
-            try
-            {
-                var response = await _userService.Login(model.email, model.password);
-                if (!response.status)
-                    return BadRequest("Error loging in ");
-                return Ok(response);
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-                
-            }
-           
+            var response = await _userService.Login(model.email, model.password);
+            if (!response.Status)
+                return BadRequest(response);
+
+            return Ok(response);
            
         }
     }

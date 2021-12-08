@@ -33,11 +33,11 @@ namespace WalkingSkeletonApi.Data
                         );";
 
             var hashes = Util.HashGenerator("12345");
-            var hexString1 = "0x" + String.Join("", hashes[0].Select(n => n.ToString("X2")));
-            var hexString2 = "0x" + String.Join("", hashes[1].Select(n => n.ToString("X2")));
+            var passHash = "0x" + String.Join("", hashes[0].Select(n => n.ToString("X2")));
+            var passSalt = "0x" + String.Join("", hashes[1].Select(n => n.ToString("X2")));
 
             string stmt2 = String.Format("INSERT INTO AppUser (id, lastName, firstName, email, passwordHash, passwordSalt)" +
-                        $"VALUES('1', 'John', 'Doe', 'john@doe.com', {hexString1}, {hexString2});");
+                        $"VALUES('1', 'John', 'Doe', 'john@doe.com', {passHash}, {passSalt});");
 
 
             stmt2 += "INSERT INTO Roles (id, RoleName) VALUES('1', 'Admin'), ('2', 'Regular');";

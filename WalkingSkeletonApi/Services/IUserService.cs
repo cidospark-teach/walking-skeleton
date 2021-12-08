@@ -10,8 +10,8 @@ namespace WalkingSkeletonApi.Services
     public interface IUserService
     {
         public List<User> Users { get;}
-        Task<RegisterSuccessDto> Register(User user, string password);
-        Task<LoginSuccess> Login(string email, string password);
+        Task<ResponseDto<RegisterSuccessDto>> Register(User user, string password);
+        Task<ResponseDto<LoginCredDto>> Login(string email, string password);
         Task<User> GetUser(string email);
     }
 }
