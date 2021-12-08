@@ -12,13 +12,11 @@ namespace WalkingSkeletonApi.Data.Repositories.Database
     public class UserRepository : IUserRepository
     {
         private readonly IADOOperations _ado;
-        private readonly SqlConnection _conn;
         private readonly IConfiguration _config;
 
         public UserRepository(IADOOperations aDOOperations, IConfiguration config)
         {
             _ado = aDOOperations;
-            _conn = new SqlConnection(config.GetSection("ConnectionStrings:Default").Value);
             _config = config;
         }
 
