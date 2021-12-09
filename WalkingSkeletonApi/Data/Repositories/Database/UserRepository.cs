@@ -41,6 +41,31 @@ namespace WalkingSkeletonApi.Data.Repositories.Database
             return false;
         }
 
+        public async Task<bool> Delete<T>(T entity)
+        {
+            var user = entity as User;
+
+            var stmt = $"DELETE FROM AppUser WHERE id = {user.Id} OR email = {user.Email}";
+            try
+            {
+                if (await _ado.ExecuteForQuery(stmt))
+                {
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
+            return false;
+        }
+
+        public Task<bool> Edit<T>(T entity)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<User> GetUserByEmail(string email)
         {
 

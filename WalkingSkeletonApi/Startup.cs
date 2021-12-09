@@ -28,9 +28,9 @@ namespace WalkingSkeletonApi
 
             services.AddScoped<IADOOperations, ADOOperation>();
             services.AddScoped<IJWTService, JWTService>();
-            
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IAuthService, AuthService>();
 
             services.AddCors();
             services.AddSwaggerGen();

@@ -13,16 +13,16 @@ namespace WalkingSkeletonApi.Controllers
     [Route("[controller]")]
     public class AuthController : ControllerBase
     {
-        private readonly IUserService _userService;
-        public AuthController(IUserService user)
+        private readonly IAuthService _authService;
+        public AuthController(IAuthService auth)
         {
-            _userService = user;
+            _authService = auth;
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginDTO model)
         {
-            var response = await _userService.Login(model.email, model.password);
+            var response = await _authService.Login(model.email, model.password);
             if (!response.Status)
                 return BadRequest(response);
 
