@@ -67,7 +67,7 @@ namespace WalkingSkeletonApi.Data.Repositories.Database
 
             var stmt = $"UPDATE AppUser SET id = '{user.Id}', lastName = '{user.LastName}', " +
                 $"firstName = '{user.FirstName}', email = '{user.Email}'" +
-                $"WHERE id = {user.Id} OR email = {user.Email}";
+                $"WHERE id = '{user.Id}' OR email = '{user.Email}'";
 
             try
             {
@@ -90,6 +90,41 @@ namespace WalkingSkeletonApi.Data.Repositories.Database
             var user = new User();
 
             string stmt = $"SELECT * FROM {_config.GetSection("Tables:UserTable").Value} WHERE email = '{email}'";
+
+            try
+            {
+                var response = await _ado.ExecuteForReader(stmt, "id", "firstname", "lastname", "email", "passwordHash", "passwordSalt");
+
+                if (response.Count <= 0)
+                {
+                    return null;
+                }
+
+                user = new User
+                {
+                    Id = response[0].Values[0],
+                    LastName = response[0].Values[1],
+                    FirstName = response[0].Values[2],
+                    Email = response[0].Values[3],
+                    PasswordHash = response[0].ByteValues[0],
+                    PasswordSalt = response[0].ByteValues[1],
+                };
+
+            }
+            catch (DbException ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
+            return user;
+        }
+
+        public async Task<User> GetUserById(string id)
+        {
+
+            var user = new User();
+
+            string stmt = $"SELECT * FROM {_config.GetSection("Tables:UserTable").Value} WHERE id = '{id}'";
 
             try
             {

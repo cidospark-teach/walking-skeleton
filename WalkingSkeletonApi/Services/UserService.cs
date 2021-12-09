@@ -23,14 +23,25 @@ namespace WalkingSkeletonApi.Services
             }
         }
 
-        public Task<ResponseDto<bool>> DeleteUser(User user)
+        public async Task<bool> DeleteUser(User user)
         {
-            throw new NotImplementedException();
+            var status = false;
+            try
+            {
+                if (await _userRepo.Delete<User>(user))
+                {
+                    status = true;
+                }
+            }catch(Exception ex)
+            {
+                // log err
+            }
+            return status;
         }
 
-        public async Task<ResponseDto<UserToReturnDto>> EditUser(User user)
+        public async Task<User> EditUser(User user)
         {
-            var res = new ResponseDto<UserToReturnDto>();
+            User res = null;
             try
             {
                 var userFromDb = await _userRepo.GetUserByEmail(user.Email);
@@ -44,27 +55,15 @@ namespace WalkingSkeletonApi.Services
 
                 if(await _userRepo.Edit<User>(user))
                 {
-                    res.Status = true;
-                    res.Data = new UserToReturnDto
+                    res = new User
                     {
                         Id = user.Id,
                         FirstName = user.FirstName,
                         LastName = user.LastName,
                         Email = user.Email
                     };
-                    res.Message = "User detail updated sucessfully!";
                 }
-                else
-                {
-                    res.Status = false;
-                    res.Message = "Error updating user!";
-                    res.Errors.Add(new ErrorItem
-                    {
-                        Key = "Failed",
-                        ErrorMessages = new List<string> { $"Could not update details of user!" }
-                    });
-                }
-
+                
             }
             catch (Exception ex)
             {
@@ -75,7 +74,7 @@ namespace WalkingSkeletonApi.Services
 
         public async Task<User> GetUser(string email)
         {
-            var user = new User();
+            User user = null;
             try
             {
                 user = await _userRepo.GetUserByEmail(email);
@@ -88,20 +87,22 @@ namespace WalkingSkeletonApi.Services
             return user;
         }
 
-        public async Task<ResponseDto<RegisterSuccessDto>> Register(User user, string password)
+        public async Task<Tuple<bool, string, string, string>> Register(User user, string password)
         {
+
+            Tuple<bool, string, string, string> result = null;
 
             var res = new ResponseDto<RegisterSuccessDto>();
             var userFromDb = await _userRepo.GetUserByEmail(user.Email);
             if(userFromDb != null)
             {
-                res.Status = false;
-                res.Message = "User already exist!";
-                res.Errors.Add(new ErrorItem {
-                    Key = "Invalid",
-                    ErrorMessages = new List<string> { $"A user already exist with this email: {user.Email}" }
-                });
-                return res;
+                result = new Tuple<bool, string, string, string>(
+                        false,
+                        "User already exist!",
+                        "",
+                        ""
+                    );
+                return result;
             }
 
             var listOfHash = Util.HashGenerator(password);
@@ -109,32 +110,23 @@ namespace WalkingSkeletonApi.Services
             user.PasswordHash = listOfHash[0];
             user.PasswordSalt = listOfHash[1];
 
-
             try
             {                
                 if(await _userRepo.Add<User>(user))
                 {
-                    res.Status = true;
-                    res.Data = new RegisterSuccessDto { UserId = user.Id,
-                        FullName = $"{user.FirstName} {user.LastName}",
-                        Email = user.Email
-                    };
-                    res.Message = "New user added sucessfully!";
-                }
-                else
-                {
-                    res.Status = false;
-                    res.Message = "Error adding user!";
-                    res.Errors.Add(new ErrorItem { Key = "Failed",
-                        ErrorMessages = new List<string> { $"New user was not added" }
-                    });
+                    result = new Tuple<bool, string, string, string>(
+                        true,
+                        user.Id, 
+                        $"{user.FirstName} {user.LastName}", 
+                        user.Email
+                    );
                 }
             }
             catch (Exception ex)
             {
                 // Log Error
             }
-            return res;
+            return result;
         }
     }
 }

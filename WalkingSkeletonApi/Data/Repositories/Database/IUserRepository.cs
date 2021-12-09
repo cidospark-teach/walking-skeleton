@@ -10,5 +10,6 @@ namespace WalkingSkeletonApi.Data.Repositories.Database
     {
         Task<List<User>> GetUsers();
         Task<User> GetUserByEmail(string email);
+        Task<User> GetUserById(string id);
     }
 }
