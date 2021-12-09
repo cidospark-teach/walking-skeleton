@@ -12,5 +12,8 @@ namespace WalkingSkeletonApi.Services
         public List<User> Users { get;}
         Task<ResponseDto<RegisterSuccessDto>> Register(User user, string password);
         Task<User> GetUser(string email);
+        Task<ResponseDto<User>> EditUser(User user);
+        Task<ResponseDto<bool>> DeleteUser(User user);
+
     }
 }

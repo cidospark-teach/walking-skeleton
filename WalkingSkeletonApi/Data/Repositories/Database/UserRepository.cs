@@ -45,7 +45,7 @@ namespace WalkingSkeletonApi.Data.Repositories.Database
         {
             var user = entity as User;
 
-            var stmt = $"DELETE FROM AppUser WHERE id = {user.Id} OR email = {user.Email}";
+            var stmt = $"DELETE FROM AppUser WHERE id = '{user.Id}' OR email = '{user.Email}'";
             try
             {
                 if (await _ado.ExecuteForQuery(stmt))
@@ -61,9 +61,27 @@ namespace WalkingSkeletonApi.Data.Repositories.Database
             return false;
         }
 
-        public Task<bool> Edit<T>(T entity)
+        public async Task<bool> Edit<T>(T entity)
         {
-            throw new NotImplementedException();
+            var user = entity as User;
+
+            var stmt = $"UPDATE AppUser SET id = '{user.Id}', lastName = '{user.LastName}', " +
+                $"firstName = '{user.FirstName}', email = '{user.Email}'" +
+                $"WHERE id = {user.Id} OR email = {user.Email}";
+
+            try
+            {
+                if (await _ado.ExecuteForQuery(stmt))
+                {
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
+            return false;
         }
 
         public async Task<User> GetUserByEmail(string email)

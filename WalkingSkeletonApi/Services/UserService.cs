@@ -23,6 +23,56 @@ namespace WalkingSkeletonApi.Services
             }
         }
 
+        public Task<ResponseDto<bool>> DeleteUser(User user)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<ResponseDto<UserToReturnDto>> EditUser(User user)
+        {
+            var res = new ResponseDto<UserToReturnDto>();
+            try
+            {
+                var userFromDb = await _userRepo.GetUserByEmail(user.Email);
+                if(userFromDb != null)
+                {
+                    // map new details to user fetched
+                    userFromDb.LastName = user.LastName;
+                    userFromDb.FirstName = user.LastName;
+                    userFromDb.Email = user.LastName;
+                }
+
+                if(await _userRepo.Edit<User>(user))
+                {
+                    res.Status = true;
+                    res.Data = new UserToReturnDto
+                    {
+                        Id = user.Id,
+                        FirstName = user.FirstName,
+                        LastName = user.LastName,
+                        Email = user.Email
+                    };
+                    res.Message = "User detail updated sucessfully!";
+                }
+                else
+                {
+                    res.Status = false;
+                    res.Message = "Error updating user!";
+                    res.Errors.Add(new ErrorItem
+                    {
+                        Key = "Failed",
+                        ErrorMessages = new List<string> { $"Could not update details of user!" }
+                    });
+                }
+
+            }
+            catch (Exception ex)
+            {
+                // log error
+            }
+            return res;
+        }
+
         public async Task<User> GetUser(string email)
         {
             var user = new User();
