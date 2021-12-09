@@ -161,47 +161,5 @@ namespace WalkingSkeletonApi.Controllers
 
         }
 
-        //[HttpPut("delete-user/{id}")]
-        //public async Task<IActionResult> DeleteUser(string id)
-        //{
-        //    check if user logged is the one making the changes - only works for system using Auth tokens
-        //    ClaimsPrincipal currentUser = this.User;
-        //    var currentUserId = currentUser.FindFirst(ClaimTypes.NameIdentifier).Value;
-        //    if (id.Equals(currentUserId))
-        //    {
-        //        ModelState.AddModelError("Denied", $"You are not allowed to delete your details");
-        //        var result2 = Util.BuildResponse<List<UserToReturnDto>>(false, "Access denied!", ModelState, null);
-        //        return BadRequest(result2);
-        //    }
-
-        //    Map DTO to User
-        //    var user = new User
-        //    {
-        //        Id = model.Id,
-        //        FirstName = model.FirstName,
-        //        LastName = model.LastName,
-        //        Email = model.Email
-        //    };
-
-        //    var response = await _userService.EditUser(user);
-        //    if (response != null)
-        //    {
-        //        var userToReturn = new UserToReturnDto
-        //        {
-        //            Id = response.Id,
-        //            FirstName = response.FirstName,
-        //            LastName = response.LastName,
-        //            Email = response.Email
-        //        };
-
-        //        var result = Util.BuildResponse(true, "User updated sucessfully!", null, userToReturn);
-        //        return Ok(result);
-        //    }
-
-        //    ModelState.AddModelError("Failed", "User not updated");
-        //    var res = Util.BuildResponse<List<UserToReturnDto>>(false, "Could not update details of user!", ModelState, null);
-        //    return BadRequest(res);
-
-        //}
     }
 }
