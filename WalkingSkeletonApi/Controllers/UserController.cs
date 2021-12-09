@@ -27,6 +27,8 @@ namespace WalkingSkeletonApi.Controllers
         [HttpGet("get-users")]
         public IActionResult GetUsers()
         {
+            var res = new ResponseDto<List<UserToReturnDto>>();
+
             // map data from db to dto to reshape it and remove null fields
             var listOfUsersToReturn = new List<UserToReturnDto>();
             var users = _userService.Users;
@@ -41,11 +43,18 @@ namespace WalkingSkeletonApi.Controllers
                         Email = user.Email
                     });
                 }
-                return Ok(listOfUsersToReturn);
+                res.Status = true;
+                res.Message = "List of users!";
+                res.Data = listOfUsersToReturn;
+                return Ok(res);
             }
             else
             {
-                return NotFound("No results found!");
+                res.Status = false;
+                res.Message = "No results found!";
+                res.Errors.Add( new ErrorItem { Key = "Notfound", 
+                    ErrorMessages = new List<string> { "No result found for users" } });
+                return NotFound(res);
             }
 
         }
@@ -53,6 +62,8 @@ namespace WalkingSkeletonApi.Controllers
         [HttpGet("get-user")]
         public async Task<IActionResult> GetUser(string email)
         {
+            var res = new ResponseDto<UserToReturnDto>();
+
             // map data from db to dto to reshape it and remove null fields
             var UserToReturn = new UserToReturnDto();
             var user = await _userService.GetUser(email);
@@ -65,11 +76,23 @@ namespace WalkingSkeletonApi.Controllers
                     FirstName = user.FirstName,
                     Email = user.Email
                 };
-                return Ok(UserToReturn);
+
+                res.Status = true;
+                res.Message = "User detail!";
+                res.Data = UserToReturn;
+                return Ok(res);
             }
             else
             {
-                return NotFound("No results found!");
+                res.Status = false;
+                res.Message = "No results found!";
+                res.Errors.Add(new ErrorItem
+                {
+                    Key = "Notfound",
+                    ErrorMessages = new List<string> { "No result found for user" }
+                });
+
+                return NotFound(res);
             }
 
         }

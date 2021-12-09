@@ -34,8 +34,7 @@ namespace WalkingSkeletonApi.Services
             }
             catch (Exception ex)
             {
-
-                throw new Exception(ex.Message);
+                //log error
             }
             return user;
         }
