@@ -15,9 +15,8 @@ namespace WalkingSkeletonApi.Helpers
             CreateMap<AppUser, UserToReturnDto>();
             CreateMap<AppUser, RegisterSuccessDto>();
             CreateMap<RegisterDto, AppUser>()
-                .ForMember(dest => dest.Address.Street, x => x.MapFrom(x => x.Street))
-                .ForMember(dest => dest.Address.State, x => x.MapFrom(x => x.State))
-                .ForMember(dest => dest.Address.Country, x => x.MapFrom(x => x.Country));
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(u => u.Email))
+                .ForMember(dest => dest.Address, x => x.MapFrom(s => new Address {  Street = s.Street, State = s.State, Country = s.Country }));
             CreateMap<PhotoUploadDto, Photo>();
             CreateMap<Photo, PhotoToReturnDto>();
         }

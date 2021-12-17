@@ -25,6 +25,7 @@ namespace WalkingSkeletonApi.Models
         public AppUser()
         {
             Photos = new List<Photo>();
+            Address = new Address();
         }
     }
 }

@@ -101,6 +101,11 @@ namespace WalkingSkeletonApi.Controllers
         {
             // map data from model to user
             var user = _mapper.Map<AppUser>(model);
+            //user.Address.Street = model.Street;
+            //user.Address.State = model.State;
+            //user.Address.Country = model.Country;
+
+
             var response = await _userMgr.CreateAsync(user, model.Password);
 
             if (!response.Succeeded)
