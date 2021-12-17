@@ -11,50 +11,35 @@ namespace WalkingSkeletonApi.Services
 {
     public class AuthService : IAuthService
     {
+        private readonly UserManager<AppUser> _userMgr;
+        private readonly SignInManager<AppUser> _signinMgr;
+        private readonly IJWTService _jwtService;
 
-        public AuthService(UserManager<AppUser> userManager, IJWTService jWTService)
+        public AuthService(UserManager<AppUser> userManager, SignInManager<AppUser> signinManager, IJWTService jWTService)
         {
+            _userMgr = userManager;
+            _signinMgr = signinManager;
+            _jwtService = jWTService;
         }
-        //public async Task<ResponseDto<LoginCredDto>> Login(string email, string password)
-        //{
-        //    // the code below has no much importance now that LoginDto have been added data annotations
-        //    #region removable code
-        //    if (String.IsNullOrWhiteSpace(email))
-        //        throw new Exception("Email is empty");
-        //    if (String.IsNullOrWhiteSpace(password))
-        //        throw new Exception("Password is empty");
-        //    #endregion
 
-        //    var loginCred = new LoginCredDto();
-        //    var res = new ResponseDto<LoginCredDto>();
-        //    List<string> roles = new List<string>();
-        //    roles.Add("admin");
-        //    try
-        //    {
-        //        var response = await _userRepo.GetUserByEmail(email);
-        //        if (Util.CompareHash(password, response.PasswordHash, response.PasswordSalt))
-        //        {
-        //            loginCred.Id = response.Id;
-        //            loginCred.token = _jWTService.GenerateToken(response, roles);
+        public async Task<LoginCredDto> Login(string email, string password, bool rememberMe)
+        {
+            var user = await _userMgr.FindByEmailAsync(email);
 
-        //            res.Status = true;
-        //            res.Message = "Login sucessfully!";
-        //            res.Data = loginCred;
-        //        }
-        //        else
-        //        {
-        //            res.Status = false;
-        //            res.Message = "Login failed!";
-        //            res.Data = null;
-        //        }
+            var res = await _signinMgr.PasswordSignInAsync(user, password, rememberMe, false);
 
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        //Log error
-        //    }
-        //    return res;
+            if (!res.Succeeded)
+            {
+                return new LoginCredDto { status = false };
+            }
 
-        //}
+            // get jwt token
+            var userRoles = await _userMgr.GetRolesAsync(user);
+            var token = _jwtService.GenerateToken(user, userRoles.ToList());
+
+
+            return new LoginCredDto {  status = true, Id = user.Id, token = token };
+
+        }
     }
 }
