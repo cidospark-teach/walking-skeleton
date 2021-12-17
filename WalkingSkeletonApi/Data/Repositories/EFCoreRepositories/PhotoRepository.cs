@@ -1,8 +1,10 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WalkingSkeletonApi.Data.EFCore;
+using WalkingSkeletonApi.Models;
 
 namespace WalkingSkeletonApi.Data.Repositories.EFCoreRepositories
 {
@@ -20,14 +22,31 @@ namespace WalkingSkeletonApi.Data.Repositories.EFCoreRepositories
             return await SaveChanges();
         }
 
-        public Task<bool> Delete<T>(T entity)
+        public async Task<bool> Delete<T>(T entity)
         {
-            throw new NotImplementedException();
+            _ctx.Remove(entity);
+            return await SaveChanges();
+        }
+        
+        public async Task<bool> Edit<T>(T entity)
+        {
+            _ctx.Update(entity);
+            return await SaveChanges();
         }
 
-        public Task<bool> Edit<T>(T entity)
+        public async Task<Photo> GetPhotoByPublicId(string PublicId)
         {
-            throw new NotImplementedException();
+            return await _ctx.Photos.Include(x => x.AppUser).FirstOrDefaultAsync(x => x.PublicId == PublicId);
+        }
+
+        public async Task<List<Photo>> GetPhotos()
+        {
+            return await _ctx.Photos.ToListAsync();
+        }
+
+        public async Task<List<Photo>> GetPhotosByUserId(string UserId)
+        {
+            return await _ctx.Photos.Where(x => x.AppUserId == UserId).ToListAsync();
         }
 
         public async Task<bool> SaveChanges()

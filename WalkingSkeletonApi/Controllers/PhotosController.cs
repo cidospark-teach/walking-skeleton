@@ -1,22 +1,13 @@
 ﻿using AutoMapper;
-using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using WalkingSkeletonApi.Commons;
-using WalkingSkeletonApi.Data.Repositories.EFCoreRepositories;
 using WalkingSkeletonApi.DTOs;
 using WalkingSkeletonApi.Helpers;
-using WalkingSkeletonApi.Models;
 using WalkingSkeletonApi.Services;
 
 namespace WalkingSkeletonApi.Controllers
@@ -27,32 +18,29 @@ namespace WalkingSkeletonApi.Controllers
     public class PhotosController : ControllerBase
     {
         private readonly IMapper _mapper;
-        private readonly UserManager<AppUser> _userMgr;
         private readonly IPhotoService _photoService;
 
-        public PhotosController(IMapper mapper, UserManager<AppUser> userManager, IPhotoService photoService)
+        public PhotosController(IMapper mapper, IPhotoService photoService)
         {
             _mapper = mapper;
-            _userMgr = userManager;
             _photoService = photoService;
         }
 
 
         // api/Photos/AddPhoto?userId=1
-        //[Authorize(Roles = "Admin, Regular")]
         [AllowAnonymous]
-        [HttpPost]
+        [HttpPost("add-photo")]
         public async Task<IActionResult> AddPhoto([FromForm] PhotoUploadDto model, string userId)
         {
             //check if user logged is the one making the changes - only works for system using Auth tokens
-            //ClaimsPrincipal currentUser = this.User;
-            //var currentUserId = currentUser.FindFirst(ClaimTypes.NameIdentifier).Value;
-            //if (!userId.Equals(currentUserId))
-            //{
-            //    ModelState.AddModelError("Denied", $"You are not allowed to upload photo for another user");
-            //    var result2 = Util.BuildResponse<List<UserToReturnDto>>(false, "Access denied!", ModelState, null);
-            //    return BadRequest(result2);
-            //}
+            ClaimsPrincipal currentUser = this.User;
+            var currentUserId = currentUser.FindFirst(ClaimTypes.NameIdentifier).Value;
+            if (!userId.Equals(currentUserId))
+            {
+                ModelState.AddModelError("Denied", $"You are not allowed to upload photo for another user");
+                var result2 = Util.BuildResponse<string>(false, "Access denied!", ModelState, "");
+                return BadRequest(result2);
+            }
 
             var file = model.Photo;
 
@@ -79,6 +67,29 @@ namespace WalkingSkeletonApi.Controllers
 
             ModelState.AddModelError("Invalid", "File size must not be empty");
             return BadRequest(Util.BuildResponse<ImageUploadResult>(false, "File is empty", ModelState, null));
+
+        }
+
+        [HttpGet("get-user-photos")]
+        public async Task<IActionResult> GetUserPhotos(string userId)
+        {
+            var photos = await _photoService.GetUserPhotosAsync(userId);
+            if(photos == null)
+            {
+                ModelState.AddModelError("Not found", "No result found for photos");
+                return NotFound(Util.BuildResponse<ImageUploadResult>(false, "Result is empty", ModelState, null));
+            }
+
+            // map result
+            var listOfUsersToReturn = new List<PhotoToReturnDto>();
+            foreach(var photo in photos)
+            {
+                var photosToReturn = _mapper.Map<PhotoToReturnDto>(photo);
+                listOfUsersToReturn.Add(photosToReturn);
+
+            }
+
+            return Ok(Util.BuildResponse<List<PhotoToReturnDto>>(true, "List of user's photos", null, listOfUsersToReturn));
         }
     }
 }

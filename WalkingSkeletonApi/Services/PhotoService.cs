@@ -11,6 +11,7 @@ using Microsoft.Extensions.Options;
 using WalkingSkeletonApi.Helpers;
 using Microsoft.EntityFrameworkCore;
 using WalkingSkeletonApi.Models;
+using System.Collections.Generic;
 
 namespace WalkingSkeletonApi.Services
 {
@@ -31,6 +32,7 @@ namespace WalkingSkeletonApi.Services
             _userMgr = userManager;
             _photoRepo = photoRepository;
         }
+
 
         public async Task<Tuple<bool, PhotoUploadDto>> UploadPhotoAsync(PhotoUploadDto model, string userId)
         {
@@ -75,5 +77,95 @@ namespace WalkingSkeletonApi.Services
 
             return new Tuple<bool, PhotoUploadDto>(res, model);
         }
+
+        public async Task<List<Photo>> GetUserPhotosAsync(string userId)
+        {
+            var res = await _photoRepo.GetPhotosByUserId(userId);
+            if (res != null)
+                return res;
+
+            return null;
+        }
+
+        public async Task<Photo> GetUserMainPhotoAsync(string userId)
+        {
+            var res = await _photoRepo.GetPhotosByUserId(userId);
+
+            var mainPhoto = res.FirstOrDefault(x => x.IsMain == true);
+
+            if (mainPhoto != null)
+                return mainPhoto;
+
+            return null;
+        }
+
+        public async Task<bool> SetMainPhotoAsync(string userId, string PublicId)
+        {
+            var photos = await _photoRepo.GetPhotosByUserId(userId);
+            if(photos != null)
+            {
+                this.UnsetMain(photos);
+
+                var newMain = photos.FirstOrDefault(x => x.PublicId == PublicId);
+                newMain.IsMain = true;
+
+                // update database
+                var res = await _photoRepo.Edit(newMain);
+                if (res)
+                    return true;
+            }
+
+            return false;
+        }
+
+        public async Task<bool> UnSetMainPhotoAsync(string userId)
+        {
+            var photos = await _photoRepo.GetPhotosByUserId(userId);
+            if (photos != null)
+            {
+                this.UnsetMain(photos);
+
+                // update database
+                var res = await _photoRepo.Edit(photos);
+                if (res)
+                    return true;
+            }
+
+            return false;
+        }
+
+        private void UnsetMain(List<Photo> photos)
+        {
+            if (photos.Any(x => x.IsMain))
+            {
+                // get the main photo and unset it
+                var main = photos.FirstOrDefault(x => x.IsMain == true);
+                main.IsMain = false;
+            }
+        }
+
+        public async Task<bool> DeletePhotoAsync(string PublicId)
+        {
+            DeletionParams destroyParams = new DeletionParams(PublicId)
+            {
+                ResourceType = ResourceType.Raw
+            };
+
+            DeletionResult destroyResult = _cloudinary.Destroy(destroyParams);
+
+            if (destroyResult.StatusCode.ToString().Equals("OK"))
+            {
+                var photo = await _photoRepo.GetPhotoByPublicId(PublicId);
+                if(photo != null)
+                {
+                    var res = await _photoRepo.Delete(photo);
+                    if (res)
+                        return true;
+                }
+            }
+
+            return false;
+        }
+
     }
 }
