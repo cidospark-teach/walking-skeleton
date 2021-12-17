@@ -101,16 +101,6 @@ namespace WalkingSkeletonApi.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> GetUserMainPhoto(string userId)
         {
-            //check if user logged is the one making the changes - only works for system using Auth tokens
-            ClaimsPrincipal currentUser = this.User;
-            var currentUserId = currentUser.FindFirst(ClaimTypes.NameIdentifier).Value;
-            if (!userId.Equals(currentUserId))
-            {
-                ModelState.AddModelError("Denied", $"You are not allowed to upload photo for another user");
-                var result2 = Util.BuildResponse<string>(false, "Access denied!", ModelState, "");
-                return BadRequest(result2);
-            }
-
             var photo = await _photoService.GetUserMainPhotoAsync(userId);
             if (photo == null)
             {
@@ -129,7 +119,6 @@ namespace WalkingSkeletonApi.Controllers
         // this route is only open to logged-in users
         // api/Photos/set-main-photo/kbumxhsvbyqyebrtagmk?userId=d274fa2f-201a-41f9-8a89-f17c4f07544d
         [HttpPatch("set-main-photo/{publicId}")]
-        [AllowAnonymous]
         public async Task<IActionResult> SetMainPhoto(string userId, string publicId)
         {
             //check if user logged is the one making the changes - only works for system using Auth tokens
@@ -156,7 +145,6 @@ namespace WalkingSkeletonApi.Controllers
         // this route is only open to logged-in users
         // api/Photos/unset-main-photo?userId=d274fa2f-201a-41f9-8a89-f17c4f07544d
         [HttpPatch("unset-main-photo")]
-        [AllowAnonymous]
         public async Task<IActionResult> UnsetMainPhoto(string userId)
         {
             //check if user logged is the one making the changes - only works for system using Auth tokens
@@ -183,7 +171,6 @@ namespace WalkingSkeletonApi.Controllers
         // this route is only open to logged-in users
         // api/Photos/delete-photo/publicId=kbumxhsvbyqyebrtagmk?userId=d274fa2f-201a-41f9-8a89-f17c4f07544d
         [HttpDelete("delete-photo/{publicId}")]
-        [AllowAnonymous]
         public async Task<IActionResult> DeletePhoto(string userId, string publicId)
         {
             //check if user logged is the one making the changes - only works for system using Auth tokens
@@ -208,3 +195,7 @@ namespace WalkingSkeletonApi.Controllers
         }
     }
 }
+
+
+//"id": "d274fa2f-201a-41f9-8a89-f17c4f07544d",
+// "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiJkMjc0ZmEyZi0yMDFhLTQxZjktOGE4OS1mMTdjNGYwNzU0NGQiLCJ1bmlxdWVfbmFtZSI6Ik1jZGFuaWVsIEZseW5uIiwiZW1haWwiOiJtY2RhbmllbGZseW5uQGdhbGxheGlhLmNvbSIsInJvbGUiOiJSZWd1bGFyIiwibmJmIjoxNjM5Nzc3MDI2LCJleHAiOjE2Mzk3ODIwMDAsImlhdCI6MTYzOTc3NzAyNn0.NAoZYRMHJbVbLsVPoEDZ6HmxIreB_d7UwLLR3t1oijk",
