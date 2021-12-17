@@ -91,8 +91,7 @@ namespace WalkingSkeletonApi.Controllers
             else
             {
                 ModelState.AddModelError("Notfound", $"There was no record found for user with email {user.Email}");
-                var res = Util.BuildResponse<List<UserToReturnDto>>(false, "No result found!", ModelState, null);
-                return NotFound(res);
+                return NotFound(Util.BuildResponse<List<UserToReturnDto>>(false, "No result found!", ModelState, null));
             }
 
         }
@@ -135,12 +134,40 @@ namespace WalkingSkeletonApi.Controllers
             // map data to dto
             var details = _mapper.Map<RegisterSuccessDto>(user);
 
-            return Ok(Util.BuildResponse(true, "New user added!", null, details));
+            // the confirmation link is added to this response object for testing purpose since at this point it is not being sent via mail
+            return Ok(Util.BuildResponse(true, "New user added!", null, new { details, ConfimationLink = url }));
 
            
         }
 
+        [HttpGet("confirm-email")]
+        public async Task<IActionResult> ConfrimEmail(string email, string token)
+        {
+            if(string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(token))
+            {
+                ModelState.AddModelError("Invalid", "UserId and token is required");
+                return BadRequest(Util.BuildResponse<object>(false, "UserId or token is empty!", ModelState, null));
+            }
 
+            var user = await _userMgr.FindByEmailAsync(email);
+            if(user == null)
+            {
+                ModelState.AddModelError("NotFound", $"User with email: {email} was not found");
+                return NotFound(Util.BuildResponse<object>(false, "User not found!", ModelState, null));
+            }
+
+            var res = await _userMgr.ConfirmEmailAsync(user, token);
+            if (!res.Succeeded)
+            {
+                foreach(var err in res.Errors)
+                {
+                    ModelState.AddModelError(err.Code, err.Description);
+                }
+                return BadRequest(Util.BuildResponse<object>(false, "Failed to confirm email", ModelState, null));
+            }
+
+            return Ok(Util.BuildResponse<object>(true, "Email confirmation suceeded!", null, null));
+        }
 
     }
 }
