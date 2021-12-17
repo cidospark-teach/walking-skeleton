@@ -99,7 +99,7 @@ namespace WalkingSkeletonApi.Services
             return null;
         }
 
-        public async Task<bool> SetMainPhotoAsync(string userId, string PublicId)
+        public async Task<Tuple<bool, string>> SetMainPhotoAsync(string userId, string PublicId)
         {
             var photos = await _photoRepo.GetPhotosByUserId(userId);
             if(photos != null)
@@ -112,10 +112,10 @@ namespace WalkingSkeletonApi.Services
                 // update database
                 var res = await _photoRepo.Edit(newMain);
                 if (res)
-                    return true;
+                    return new Tuple<bool, string>(true, newMain.Url);
             }
 
-            return false;
+            return new Tuple<bool, string>(false, "");
         }
 
         public async Task<bool> UnSetMainPhotoAsync(string userId)
@@ -126,7 +126,7 @@ namespace WalkingSkeletonApi.Services
                 this.UnsetMain(photos);
 
                 // update database
-                var res = await _photoRepo.Edit(photos);
+                var res = await _photoRepo.SaveChanges();
                 if (res)
                     return true;
             }
@@ -148,7 +148,7 @@ namespace WalkingSkeletonApi.Services
         {
             DeletionParams destroyParams = new DeletionParams(PublicId)
             {
-                ResourceType = ResourceType.Raw
+                ResourceType = ResourceType.Image
             };
 
             DeletionResult destroyResult = _cloudinary.Destroy(destroyParams);
@@ -169,3 +169,8 @@ namespace WalkingSkeletonApi.Services
 
     }
 }
+
+// ade454fe-efad-49f4-a68a-87aa3aa304b4
+// http://res.cloudinary.com/cidoscloud/image/upload/v1639742392/pcnqbt8gubl0jbhku5o4.jpg
+// pcnqbt8gubl0jbhku5o4
+// d274fa2f-201a-41f9-8a89-f17c4f07544d
