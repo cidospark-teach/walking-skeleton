@@ -46,6 +46,8 @@ namespace WalkingSkeletonApi
                 //options.Password.RequireUppercase = false;
                 //options.Password.RequiredUniqueChars = 0;
 
+                options.SignIn.RequireConfirmedEmail = true;
+
             }).AddEntityFrameworkStores<WalkingSkeletonDbContext>()
             .AddDefaultTokenProviders();
 
