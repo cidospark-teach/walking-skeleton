@@ -1,6 +1,9 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -8,7 +11,10 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 using WalkingSkeletonApi.Data;
+using WalkingSkeletonApi.Data.EFCore;
 using WalkingSkeletonApi.Data.Repositories.Database;
+using WalkingSkeletonApi.Data.Repositories.EFCoreRepositories;
+using WalkingSkeletonApi.Models;
 using WalkingSkeletonApi.Services;
 
 namespace WalkingSkeletonApi
@@ -27,12 +33,32 @@ namespace WalkingSkeletonApi
         {
             services.AddControllers();
 
+            services.AddDbContextPool<WalkingSkeletonDbContext>(option =>
+            {
+                option.UseSqlServer(Configuration.GetConnectionString("Default"));
+            });
+            services.AddIdentity<AppUser, IdentityRole>(options =>
+            {
+                //options.Password.RequireDigit = true;
+                //options.Password.RequiredLength = 8;
+                //options.Password.RequireLowercase = false;
+                //options.Password.RequireNonAlphanumeric = false;
+                //options.Password.RequireUppercase = false;
+                //options.Password.RequiredUniqueChars = 0;
+
+            }).AddEntityFrameworkStores<WalkingSkeletonDbContext>();
+
+            services.AddTransient<SeederClass>();
+
             services.AddScoped<IADOOperations, ADOOperation>();
             services.AddScoped<IJWTService, JWTService>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IAddressRepository, AddressRepository>();
+            services.AddScoped<IAddressService, AddressService>();
 
+            services.AddAutoMapper();
             services.AddCors();
             services.AddSwaggerGen( c =>
             {
@@ -78,11 +104,15 @@ namespace WalkingSkeletonApi
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IADOOperations aDOOperations)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, SeederClass seeder)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                //app.UseExceptionHandler();
             }
 
             app.UseRouting();
@@ -98,6 +128,8 @@ namespace WalkingSkeletonApi
                 endpoints.MapControllers();
             });
 
+
+            //seeder.SeedMe().Wait();
             //SetupSeed.SeedMe(aDOOperations).Wait();
 
             app.UseSwagger();

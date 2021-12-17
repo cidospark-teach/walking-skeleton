@@ -1,0 +1,218 @@
+[
+  {
+    "lastName": "Spears",
+    "firstName": "Irwin",
+    "gender": "male",
+    "email": "irwinspears@gallaxia.com",
+    "isActive": true,
+    "address": {
+      "street": "Aurelia Court",
+      "state": "Georgia",
+      "country": "Tajikistan"
+    },
+    "photos": [
+      {
+        "url": "https://randomuser.me/portraits/men69.jpg",
+        "isMain": true
+      }
+    ]
+  },
+  {
+    "lastName": "Gay",
+    "firstName": "Richards",
+    "gender": "male",
+    "email": "richardsgay@gallaxia.com",
+    "isActive": true,
+    "address": {
+      "street": "Schenck Avenue",
+      "state": "American Samoa",
+      "country": "Singapore"
+    },
+    "photos": [
+      {
+        "url": "https://randomuser.me/portraits/men7.jpg",
+        "isMain": true
+      }
+    ]
+  },
+  {
+    "lastName": "Knox",
+    "firstName": "Howell",
+    "gender": "male",
+    "email": "howellknox@gallaxia.com",
+    "isActive": true,
+    "address": {
+      "street": "Clinton Street",
+      "state": "Northern Mariana Islands",
+      "country": "Saint Kitts and Nevis"
+    },
+    "photos": [
+      {
+        "url": "https://randomuser.me/portraits/men69.jpg",
+        "isMain": true
+      }
+    ]
+  },
+  {
+    "lastName": "Stafford",
+    "firstName": "Wyatt",
+    "gender": "male",
+    "email": "wyattstafford@gallaxia.com",
+    "isActive": false,
+    "address": {
+      "street": "Melba Court",
+      "state": "Arkansas",
+      "country": "Eritrea"
+    },
+    "photos": [
+      {
+        "url": "https://randomuser.me/portraits/men93.jpg",
+        "isMain": true
+      }
+    ]
+  },
+  {
+    "lastName": "Sharp",
+    "firstName": "Cook",
+    "gender": "male",
+    "email": "cooksharp@gallaxia.com",
+    "isActive": false,
+    "address": {
+      "street": "Cobek Court",
+      "state": "Washington",
+      "country": "Iraq"
+    },
+    "photos": [
+      {
+        "url": "https://randomuser.me/portraits/men79.jpg",
+        "isMain": true
+      }
+    ]
+  },
+  {
+    "lastName": "Mccoy",
+    "firstName": "Lester",
+    "gender": "male",
+    "email": "lestermccoy@gallaxia.com",
+    "isActive": false,
+    "address": {
+      "street": "Joval Court",
+      "state": "Kansas",
+      "country": "Cocos (Keeling Islands)"
+    },
+    "photos": [
+      {
+        "url": "https://randomuser.me/portraits/men14.jpg",
+        "isMain": true
+      }
+    ]
+  },
+  {
+    "lastName": "Flynn",
+    "firstName": "Mcdaniel",
+    "gender": "male",
+    "email": "mcdanielflynn@gallaxia.com",
+    "isActive": false,
+    "address": {
+      "street": "Aviation Road",
+      "state": "Virgin Islands",
+      "country": "Haiti"
+    },
+    "photos": [
+      {
+        "url": "https://randomuser.me/portraits/men69.jpg",
+        "isMain": true
+      }
+    ]
+  },
+  {
+    "lastName": "Gallegos",
+    "firstName": "Glenna",
+    "gender": "female",
+    "email": "glennagallegos@gallaxia.com",
+    "isActive": false,
+    "address": {
+      "street": "Wilson Avenue",
+      "state": "Virginia",
+      "country": "Guam"
+    },
+    "photos": [
+      {
+        "url": "https://randomuser.me/portraits/women12.jpg",
+        "isMain": true
+      }
+    ]
+  },
+  {
+    "lastName": "Ramirez",
+    "firstName": "Brittney",
+    "gender": "female",
+    "email": "brittneyramirez@gallaxia.com",
+    "isActive": false,
+    "address": {
+      "street": "Hastings Street",
+      "state": "Palau",
+      "country": "Chad"
+    },
+    "photos": [
+      {
+        "url": "https://randomuser.me/portraits/women31.jpg",
+        "isMain": true
+      }
+    ]
+  },
+  {
+    "lastName": "Aguilar",
+    "firstName": "Bertha",
+    "gender": "female",
+    "email": "berthaaguilar@gallaxia.com",
+    "isActive": false,
+    "address": {
+      "street": "Congress Street",
+      "state": "North Dakota",
+      "country": "Cote D'Ivoire (Ivory Coast)"
+    },
+    "photos": [
+      {
+        "url": "https://randomuser.me/portraits/women93.jpg",
+        "isMain": true
+      }
+    ]
+  },
+  {
+    "lastName": "Christian",
+    "firstName": "Kelli",
+    "gender": "female",
+    "email": "kellichristian@gallaxia.com",
+    "isActive": true,
+    "address": {
+      "street": "Kensington Walk",
+      "state": "Louisiana",
+      "country": "Togo"
+    },
+    "photos": [
+      {
+        "url": "https://randomuser.me/portraits/women7.jpg",
+        "isMain": true
+      }
+    ]
+  },
+  {
+    "lastName": "Ferguson",
+    "firstName": "Lina",
+    "gender": "female",
+    "email": "linaferguson@gallaxia.com",
+    "isActive": true,
+    "address": {
+      "street": "Morton Street",
+      "state": "West Virginia",
+      "country": "India"
+    },
+    "photos": [
+      {
+        "url": "https://randomuser.me/portraits/women9.jpg",
+        "isMain": true
+      }
+    ]
+  }
+]

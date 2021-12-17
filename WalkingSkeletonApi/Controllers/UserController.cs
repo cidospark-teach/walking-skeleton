@@ -1,12 +1,16 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using WalkingSkeletonApi.Commons;
 using WalkingSkeletonApi.DTOs;
+using WalkingSkeletonApi.Helpers;
 using WalkingSkeletonApi.Models;
 using WalkingSkeletonApi.Services;
 
@@ -19,38 +23,47 @@ namespace WalkingSkeletonApi.Controllers
 
         private readonly ILogger<UserController> _logger;
         private readonly IUserService _userService;
+        private readonly UserManager<AppUser> _userMgr;
+        private readonly IMapper _mapper;
 
-        public UserController(ILogger<UserController> logger, IUserService userService)
+        public UserController(ILogger<UserController> logger, IUserService userService, 
+            UserManager<AppUser> userManager, IMapper mapper)
         {
             _logger = logger;
             _userService = userService;
+            _userMgr = userManager;
+            _mapper = mapper;
         }
 
        
         [HttpGet("get-users")]
-        public IActionResult GetUsers()
+        public IActionResult GetUsers(int page, int perPage)
         {
             // map data from db to dto to reshape it and remove null fields
             var listOfUsersToReturn = new List<UserToReturnDto>();
-            var users = _userService.Users;
+            
+            //var users = _userService.Users;
+            var users = _userMgr.Users.ToList();
+
             if(users != null)
             {
-                foreach(var user in users)
+                var pagedList = PagedList<AppUser>.Paginate(users, page, perPage);
+                foreach(var user in pagedList.Data)
                 {
-                    listOfUsersToReturn.Add(new UserToReturnDto {
-                        Id = user.Id,
-                        LastName = user.LastName,
-                        FirstName = user.FirstName,
-                        Email = user.Email
-                    });
+                    listOfUsersToReturn.Add(_mapper.Map<UserToReturnDto>(user));
                 }
 
-                var res = Util.BuildResponse(true, "List of users", null, listOfUsersToReturn);
-                return Ok(res);
+                var res = new PaginatedListDto<UserToReturnDto>
+                {
+                    MetaData = pagedList.MetaData,
+                    Data = listOfUsersToReturn
+                };
+
+                return Ok(Util.BuildResponse(true, "List of users", null, res));
             }
             else
             {
-                ModelState.AddModelError("Notfound", "There was not record of users found!");
+                ModelState.AddModelError("Notfound", "There was no record for users found!");
                 var res = Util.BuildResponse<List<UserToReturnDto>>(false, "No results found!", ModelState, null);
                 return NotFound(res);
             }
@@ -62,7 +75,8 @@ namespace WalkingSkeletonApi.Controllers
         {
             // map data from db to dto to reshape it and remove null fields
             var UserToReturn = new UserToReturnDto();
-            var user = await _userService.GetUser(email);
+            //var user = await _userService.GetUser(email);
+            var user = await _userMgr.FindByEmailAsync(email);
             if (user != null)
             {
                 UserToReturn = new UserToReturnDto
@@ -89,31 +103,78 @@ namespace WalkingSkeletonApi.Controllers
         public async Task<IActionResult> AddUser(RegisterDto model)
         {
             // Map DTO to User
-            var user = new User
-            {
-                FirstName = model.FirstName,
-                LastName = model.LastName,
-                Email = model.Email
-            };            
+            //var user = new User
+            //{
+            //    FirstName = model.FirstName,
+            //    LastName = model.LastName,
+            //    Email = model.Email
+            //};
 
-            var response = await _userService.Register(user, model.Password);
-            if (response != null)
+
+            // map data from dto to user
+            //var user = new AppUser
+            //{
+            //    LastName = model.LastName,
+            //    FirstName = model.FirstName,
+            //    UserName = model.Email,
+            //    IsActive = false
+            //};
+
+            var user = _mapper.Map<AppUser>(model);
+            //var response = await _userService.Register(user, model.Password);
+            var response = await _userMgr.CreateAsync(user, model.Password);
+
+            if (!response.Succeeded)
             {
-                if (response.Item1)
+                foreach(var err in response.Errors)
                 {
-                    var details = new RegisterSuccessDto { UserId = response.Item2, FullName = $"{response.Item3}", Email = response.Item4 };
-                    var result1 = Util.BuildResponse(true, "New user added sucessfully!", null, details);
-                    return Ok(result1);
+                    ModelState.AddModelError(err.Code, err.Description);
                 }
-
-                ModelState.AddModelError("Invalid", $"A user already exist with this email: {user.Email}");
-                var result2 = Util.BuildResponse<List<UserToReturnDto>>(false, "User already exists!", ModelState, null);
-                return BadRequest(result2);
+                return BadRequest(Util.BuildResponse<string>(false, "Failed to add user!", ModelState, null));
             }
 
-            ModelState.AddModelError("Failed", "New user was not added");
-            var res = Util.BuildResponse<List<UserToReturnDto>>(false, "Error adding user!", ModelState, null);
-            return BadRequest(res);
+            var res = await _userMgr.AddToRoleAsync(user, "Regular");
+
+            if (!res.Succeeded)
+            {
+                foreach (var err in response.Errors)
+                {
+                    ModelState.AddModelError(err.Code, err.Description);
+                }
+                return BadRequest(Util.BuildResponse<string>(false, "Failed to add user role!", ModelState, null));
+            }
+
+            // map data to dto
+            var details = new RegisterSuccessDto { 
+                UserId = user.Id, 
+                FullName = $"{user.FirstName} {user.LastName}", 
+                Email = user.Email 
+            };
+
+
+            return Ok(Util.BuildResponse<RegisterSuccessDto>(true, "New user added!", null, details));
+
+
+
+            #region code to ignore
+            //if (response != null)
+            //{
+            //    if (true)
+            //    {
+            //        var details = new RegisterSuccessDto { UserId = response.Item2, FullName = $"{response.Item3}", Email = response.Item4 };
+            //        var result1 = Util.BuildResponse(true, "New user added sucessfully!", null, details);
+            //        return Ok(result1);
+            //    }
+
+            //    ModelState.AddModelError("Invalid", $"A user already exist with this email: {user.Email}");
+            //    var result2 = Util.BuildResponse<List<UserToReturnDto>>(false, "User already exists!", ModelState, null);
+            //    return BadRequest(result2);
+            //}
+
+            //ModelState.AddModelError("Failed", "New user was not added");
+            //var res = Util.BuildResponse<List<UserToReturnDto>>(false, "Error adding user!", ModelState, null);
+            //return BadRequest(res);
+            #endregion
            
         }
 
