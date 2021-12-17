@@ -13,8 +13,8 @@ namespace WalkingSkeletonApi.Helpers
         public AutomapperProfile()
         {
             CreateMap<AppUser, UserToReturnDto>();
+            CreateMap<AppUser, RegisterSuccessDto>();
             CreateMap<RegisterDto, AppUser>();
-            // .ForMember(dest => dest.PhoneNumber, x => x.MapFrom(x => x.Password));
             CreateMap<PhotoUploadDto, Photo>();
             CreateMap<Photo, PhotoToReturnDto>();
         }

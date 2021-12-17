@@ -100,26 +100,8 @@ namespace WalkingSkeletonApi.Controllers
         [HttpPost("add-user")]
         public async Task<IActionResult> AddUser(RegisterDto model)
         {
-            // Map DTO to User
-            //var user = new User
-            //{
-            //    FirstName = model.FirstName,
-            //    LastName = model.LastName,
-            //    Email = model.Email
-            //};
-
-
-            // map data from dto to user
-            //var user = new AppUser
-            //{
-            //    LastName = model.LastName,
-            //    FirstName = model.FirstName,
-            //    UserName = model.Email,
-            //    IsActive = false
-            //};
-
+            // map data from model to user
             var user = _mapper.Map<AppUser>(model);
-            //var response = await _userService.Register(user, model.Password);
             var response = await _userMgr.CreateAsync(user, model.Password);
 
             if (!response.Succeeded)
@@ -142,83 +124,23 @@ namespace WalkingSkeletonApi.Controllers
                 return BadRequest(Util.BuildResponse<string>(false, "Failed to add user role!", ModelState, null));
             }
 
+            // if you system requires user's email to be confirmed before they can login 
+            // you can generate confirm email token here
+            // but ensure AddDefaultTokenProviders() have been enabled in startup else there won't be token generated
+            var token = await _userMgr.GenerateEmailConfirmationTokenAsync(user);
+            var url = Url.Action("ConfrimEmail", "User", new { Email = user.Email, Token = token }, Request.Scheme);  // this is the url to send
+
+            // next thing TODO here is to send an email to this new user to the email provided using a notification service you should build
+
             // map data to dto
-            var details = new RegisterSuccessDto { 
-                UserId = user.Id, 
-                FullName = $"{user.FirstName} {user.LastName}", 
-                Email = user.Email 
-            };
+            var details = _mapper.Map<RegisterSuccessDto>(user);
 
+            return Ok(Util.BuildResponse(true, "New user added!", null, details));
 
-            return Ok(Util.BuildResponse<RegisterSuccessDto>(true, "New user added!", null, details));
-
-
-
-            #region code to ignore
-            //if (response != null)
-            //{
-            //    if (true)
-            //    {
-            //        var details = new RegisterSuccessDto { UserId = response.Item2, FullName = $"{response.Item3}", Email = response.Item4 };
-            //        var result1 = Util.BuildResponse(true, "New user added sucessfully!", null, details);
-            //        return Ok(result1);
-            //    }
-
-            //    ModelState.AddModelError("Invalid", $"A user already exist with this email: {user.Email}");
-            //    var result2 = Util.BuildResponse<List<UserToReturnDto>>(false, "User already exists!", ModelState, null);
-            //    return BadRequest(result2);
-            //}
-
-            //ModelState.AddModelError("Failed", "New user was not added");
-            //var res = Util.BuildResponse<List<UserToReturnDto>>(false, "Error adding user!", ModelState, null);
-            //return BadRequest(res);
-            #endregion
            
         }
 
-        //[Authorize]
-        //[HttpPut("update-user/{id}")]
-        //public async Task<IActionResult> UpdateUser(string id, UserToUpdateDto model)
-        //{
-        //    // check if user logged is the one making the changes - only works for system using Auth tokens
-        //    ClaimsPrincipal currentUser = this.User;
-        //    var currentUserId = currentUser.FindFirst(ClaimTypes.NameIdentifier).Value;
-        //    if (!id.Equals(currentUserId))
-        //    {
-        //        ModelState.AddModelError("Denied", $"You are not allowed to edit another user's details");
-        //        var result2 = Util.BuildResponse<List<UserToReturnDto>>(false, "Access denied!", ModelState, null);
-        //        return BadRequest(result2);
-        //    }
 
-        //    // Map DTO to User
-        //    var user = new User
-        //    {
-        //        Id = model.Id,
-        //        FirstName = model.FirstName,
-        //        LastName = model.LastName,
-        //        Email = model.Email
-        //    };
-
-        //    var response = await _userService.EditUser(user);
-        //    if (response != null)
-        //    {
-        //        var userToReturn = new UserToReturnDto
-        //        {
-        //            Id = response.Id,
-        //            FirstName = response.FirstName,
-        //            LastName = response.LastName,
-        //            Email = response.Email
-        //        };
-
-        //        var result = Util.BuildResponse(true, "User updated sucessfully!", null, userToReturn);
-        //        return Ok(result);
-        //    }
-
-        //    ModelState.AddModelError("Failed", "User not updated");
-        //    var res = Util.BuildResponse<List<UserToReturnDto>>(false, "Could not update details of user!", ModelState, null);
-        //    return BadRequest(res);
-
-        //}
 
     }
 }

@@ -46,7 +46,8 @@ namespace WalkingSkeletonApi
                 //options.Password.RequireUppercase = false;
                 //options.Password.RequiredUniqueChars = 0;
 
-            }).AddEntityFrameworkStores<WalkingSkeletonDbContext>();
+            }).AddEntityFrameworkStores<WalkingSkeletonDbContext>()
+            .AddDefaultTokenProviders();
 
             services.AddTransient<SeederClass>();
             services.Configure<CloudinarySettings>(Configuration.GetSection("CloudinarySettings"));
