@@ -6,6 +6,6 @@ namespace WalkingSkeletonApi.Services
 {
     public interface IJWTService
     {
-        string GenerateToken(User user, List<string> userRoles);
+        string GenerateToken(AppUser user, List<string> userRoles);
     }
 }
