@@ -8,6 +8,6 @@ namespace WalkingSkeletonApi.Services
 {
     public interface IAuthService
     {
-        Task<ResponseDto<LoginCredDto>> Login(string email, string password);
+        //Task<ResponseDto<LoginCredDto>> Login(string email, string password);
     }
 }

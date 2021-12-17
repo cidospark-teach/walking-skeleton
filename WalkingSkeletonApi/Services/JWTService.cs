@@ -18,7 +18,7 @@ namespace WalkingSkeletonApi.Services
             _config = config;
         }
 
-        public string GenerateToken(User user, List<string> userRoles)
+        public string GenerateToken(AppUser user, List<string> userRoles)
         {
             // add claims
             var claims = new List<Claim>

@@ -22,15 +22,13 @@ namespace WalkingSkeletonApi.Controllers
     {
 
         private readonly ILogger<UserController> _logger;
-        private readonly IUserService _userService;
         private readonly UserManager<AppUser> _userMgr;
         private readonly IMapper _mapper;
 
-        public UserController(ILogger<UserController> logger, IUserService userService, 
+        public UserController(ILogger<UserController> logger, 
             UserManager<AppUser> userManager, IMapper mapper)
         {
             _logger = logger;
-            _userService = userService;
             _userMgr = userManager;
             _mapper = mapper;
         }
@@ -178,49 +176,49 @@ namespace WalkingSkeletonApi.Controllers
            
         }
 
-        [Authorize]
-        [HttpPut("update-user/{id}")]
-        public async Task<IActionResult> UpdateUser(string id, UserToUpdateDto model)
-        {
-            // check if user logged is the one making the changes - only works for system using Auth tokens
-            ClaimsPrincipal currentUser = this.User;
-            var currentUserId = currentUser.FindFirst(ClaimTypes.NameIdentifier).Value;
-            if (!id.Equals(currentUserId))
-            {
-                ModelState.AddModelError("Denied", $"You are not allowed to edit another user's details");
-                var result2 = Util.BuildResponse<List<UserToReturnDto>>(false, "Access denied!", ModelState, null);
-                return BadRequest(result2);
-            }
+        //[Authorize]
+        //[HttpPut("update-user/{id}")]
+        //public async Task<IActionResult> UpdateUser(string id, UserToUpdateDto model)
+        //{
+        //    // check if user logged is the one making the changes - only works for system using Auth tokens
+        //    ClaimsPrincipal currentUser = this.User;
+        //    var currentUserId = currentUser.FindFirst(ClaimTypes.NameIdentifier).Value;
+        //    if (!id.Equals(currentUserId))
+        //    {
+        //        ModelState.AddModelError("Denied", $"You are not allowed to edit another user's details");
+        //        var result2 = Util.BuildResponse<List<UserToReturnDto>>(false, "Access denied!", ModelState, null);
+        //        return BadRequest(result2);
+        //    }
 
-            // Map DTO to User
-            var user = new User
-            {
-                Id = model.Id,
-                FirstName = model.FirstName,
-                LastName = model.LastName,
-                Email = model.Email
-            };
+        //    // Map DTO to User
+        //    var user = new User
+        //    {
+        //        Id = model.Id,
+        //        FirstName = model.FirstName,
+        //        LastName = model.LastName,
+        //        Email = model.Email
+        //    };
 
-            var response = await _userService.EditUser(user);
-            if (response != null)
-            {
-                var userToReturn = new UserToReturnDto
-                {
-                    Id = response.Id,
-                    FirstName = response.FirstName,
-                    LastName = response.LastName,
-                    Email = response.Email
-                };
+        //    var response = await _userService.EditUser(user);
+        //    if (response != null)
+        //    {
+        //        var userToReturn = new UserToReturnDto
+        //        {
+        //            Id = response.Id,
+        //            FirstName = response.FirstName,
+        //            LastName = response.LastName,
+        //            Email = response.Email
+        //        };
 
-                var result = Util.BuildResponse(true, "User updated sucessfully!", null, userToReturn);
-                return Ok(result);
-            }
+        //        var result = Util.BuildResponse(true, "User updated sucessfully!", null, userToReturn);
+        //        return Ok(result);
+        //    }
 
-            ModelState.AddModelError("Failed", "User not updated");
-            var res = Util.BuildResponse<List<UserToReturnDto>>(false, "Could not update details of user!", ModelState, null);
-            return BadRequest(res);
+        //    ModelState.AddModelError("Failed", "User not updated");
+        //    var res = Util.BuildResponse<List<UserToReturnDto>>(false, "Could not update details of user!", ModelState, null);
+        //    return BadRequest(res);
 
-        }
+        //}
 
     }
 }

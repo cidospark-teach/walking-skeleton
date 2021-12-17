@@ -41,14 +41,15 @@ namespace WalkingSkeletonApi.Data.Repositories.EFCoreRepositories
             return await _ctx.Address.Include(x => x.AppUser).FirstAsync(x => x.AppUserId == userId);
         }
 
-        public async Task<object> GetAddresses()
+        public async Task<List<Address>> GetAddresses()
         {
-            return await _ctx.Address
-                        .Select(x => new {
-                            Id = x.AppUserId,
-                            address = $"{x.Street} {x.State} {x.Country}"
-                        }).OrderByDescending(k => k.Id).ThenByDescending(a => a.address)
-                        .ToListAsync();
+            return await _ctx.Address.ToListAsync();
+            //return await _ctx.Address
+            //            .Select(x => new {
+            //                Id = x.AppUserId,
+            //                address = $"{x.Street} {x.State} {x.Country}"
+            //            }).OrderByDescending(k => k.Id).ThenByDescending(a => a.address)
+            //            .ToListAsync();
 
             /*
              return await _ctx.Address.GroupBy(i => i.AppUserId).Select(x => new

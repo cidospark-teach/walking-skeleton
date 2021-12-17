@@ -12,8 +12,8 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 using WalkingSkeletonApi.Data;
 using WalkingSkeletonApi.Data.EFCore;
-using WalkingSkeletonApi.Data.Repositories.Database;
 using WalkingSkeletonApi.Data.Repositories.EFCoreRepositories;
+using WalkingSkeletonApi.Helpers;
 using WalkingSkeletonApi.Models;
 using WalkingSkeletonApi.Services;
 
@@ -49,14 +49,13 @@ namespace WalkingSkeletonApi
             }).AddEntityFrameworkStores<WalkingSkeletonDbContext>();
 
             services.AddTransient<SeederClass>();
-
-            services.AddScoped<IADOOperations, ADOOperation>();
+            services.Configure<CloudinarySettings>(Configuration.GetSection("CloudinarySettings"));
             services.AddScoped<IJWTService, JWTService>();
-            services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<IUserService, UserService>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IAddressRepository, AddressRepository>();
             services.AddScoped<IAddressService, AddressService>();
+            services.AddScoped<IPhotoRepository, PhotoRepository>();
+            services.AddScoped<IPhotoService, PhotoService>();
 
             services.AddAutoMapper();
             services.AddCors();
@@ -77,15 +76,15 @@ namespace WalkingSkeletonApi
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement
                 {
                     {
-                          new OpenApiSecurityScheme
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
                             {
-                                Reference = new OpenApiReference
-                                {
-                                    Type = ReferenceType.SecurityScheme,
-                                    Id = "Bearer"
-                                }
-                            },
-                            new string[] {}
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        new string[] {}
                     }
                 });
             });
@@ -130,7 +129,6 @@ namespace WalkingSkeletonApi
 
 
             //seeder.SeedMe().Wait();
-            //SetupSeed.SeedMe(aDOOperations).Wait();
 
             app.UseSwagger();
             app.UseSwaggerUI(x => x.SwaggerEndpoint("/swagger/v1/swagger.json", "WalkingSkeleton-v1"));

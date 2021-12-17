@@ -19,15 +19,15 @@ namespace WalkingSkeletonApi.Controllers
             _authService = auth;
         }
 
-        [HttpPost("login")]
-        public async Task<IActionResult> Login(LoginDTO model)
-        {
-            var response = await _authService.Login(model.email, model.password);
-            if (!response.Status)
-                return BadRequest(response);
+        //[HttpPost("login")]
+        //public async Task<IActionResult> Login(LoginDTO model)
+        //{
+        //    //var response = await _authService.Login(model.email, model.password);
+        //    //if (!response.Status)
+        //    //    return BadRequest(response);
 
-            return Ok(response);
+        //    return Ok();
            
-        }
+        //}
     }
 }
