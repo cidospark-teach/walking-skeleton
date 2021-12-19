@@ -3,15 +3,15 @@ A demo app used to teach the concept of building a web api using ASP.NET Core , 
 
 ## Tools to be featured in this app
 - Webapi - aspnet core web api
-- Documentation - swagger
+- Documentation - Swagger
 - 0Auth - JWT 
 - Mapping - AutoMapper
 - Data management - EFCore(Sql Server - database)
-- Containerization - docker
-- CICD - github actions
+- Containerization - Docker
+- CICD - Github actions
 - Testing - NUnit testing
-- Deployment platform - Heroku
-- Angular - Frontend client
+- Deployment Platform - Heroku
+- Frontend client - Angular
 
 
 ## Get Started with this app.
