@@ -14,13 +14,13 @@ A demo app used to teach the concept of building a web api using ASP.NET Core , 
 - Angular - Frontend client
 
 
-Get Started with this app.
+## Get Started with this app.
 
-On Windows using Visual studio IDE
+### On Windows using Visual studio IDE
 
 Clone this repo and run the solution file, Preferably using visual studio 2019. Simply by clicking the soliution file in the package named ('WalkingSkeleton.sln'). Visual studio IDE will open the solution file, and the internal server IIS will open it in your default browser
 
-On Windows Or Linux using VSCODE or (Other editor of choice)
+### On Windows Or Linux using VSCODE or (Other editor of choice)
 
 Clone this repo and
 
