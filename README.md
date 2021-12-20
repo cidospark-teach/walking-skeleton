@@ -8,6 +8,7 @@ A demo app used to teach the concept of building a web api using ASP.NET Core , 
 - Mapping - AutoMapper
 - Data management - EFCore(Sql Server - database)
 - Containerization - Docker
+- Error Logging - nLog
 - CICD - Github actions
 - Testing - NUnit testing
 - Deployment Platform - Heroku
